@@ -10,8 +10,6 @@ b = Barchart()
 
 config = configparser.ConfigParser()
 
-#symbols = Get_symbols().get_symbols()
-
 fv_symbols = FinViz().full
 
 def prompt_creds():
@@ -64,8 +62,9 @@ def get_rh_rating(symbol, analyst):
         return True
 
 def get_cp(symbol):
-    data = robin_stocks.stocks.get_quotes(symbol)[0]['ask_price']
+    data = robin_stocks.stocks.get_quotes(symbol)[0]['last_trade_price']
     return data
+
     
 username, password = get_creds()
 robin_stocks.login(username, password)
@@ -78,28 +77,11 @@ for symbol in d:
         buys.append(symbol)
 
 for symbol in buys:
+    print(symbol)
     cp = get_cp(symbol)
     Track_Buys().buy(symbol, cp, True)
 
 for symbol in bought_symbols:
     if symbol not in buys:
         cp = get_cp(symbol)
-        Track_buys().update_price(symbol, False, cp)
-
-exit()
-
-
-def main(ar, tp, analyst ):
-  print("Getting symbols with %s, target price %s percent above of current price, and at least %i analysts on RH with 90 percent buy rating" % (  ar, tp, analyst ))
-  foo = fv_symbols(ar, tp)
-  for symbol in foo:
-      if get_rh_rating(symbol, analyst) is True:
-          print("RH say %s is a BUY" % symbol)
-
-ars = [ 'strongbuy', 'buyorbetter' ]
-tps = [ 50, 40, 30 ]
-analysts = [ 15 , 10 , 5 ]
-for tp in tps:
-    for ar in ars:
-        for analyst in analysts:
-          main(ar, tp, analyst)
+        Track_buys().update_price(symbol, cp, False)

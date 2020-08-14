@@ -28,11 +28,11 @@ class Track_Buys():
         connection.commit()
         return True
 
-    def update_price(self, symbol, bot_recommends, cp):
+    def update_price(self, symbol, cp, bot_recommends):
         today = datetime.now().isoformat()
         connection = sqlite3.connect('buys.db')
         cursor = connection.cursor()
-        cursor.execute("UPDATE buys set current_price = '%i', bot_recommends = '%s' WHERE symbol = '%s'" % ( cp, bot_recommends, symbol))
+        cursor.execute("UPDATE buys set current_price = '%f', bot_recommends = '%s' WHERE symbol = '%s'" % ( float(cp), bot_recommends, symbol))
         cursor.close()
         connection.commit()
         return True
