@@ -84,4 +84,4 @@ for symbol in buys:
 for symbol in bought_symbols:
     if symbol not in buys:
         cp = get_cp(symbol)
-        Track_buys().update_price(symbol, cp, False)
+        Track_Buys().update_price(symbol, cp, False)

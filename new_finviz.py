@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 
 class FinViz():
     def get_symbols(self, r):
-        #end = "https://finviz.com/screener.ashx?v=111&f=an_recom_buybetter,cap_smallover,geo_usa,sh_price_o5,targetprice_a50&o=marketcap&r=%s" % r
         end = "https://finviz.com/screener.ashx?v=111&f=an_recom_buybetter,cap_smallover,geo_usa,sh_price_o5,targetprice_a40&o=marketcap&r=%s" % r
         response = requests.get(end, headers={'User-Agent': 'curl/7.61.1','Accept': '*/*'})
         soup = BeautifulSoup(response.text, "html.parser")
