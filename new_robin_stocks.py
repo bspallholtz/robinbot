@@ -5,6 +5,7 @@ import os
 from barchart import Barchart
 from new_finviz import FinViz
 from work_sql import Track_Buys
+from figure_std import Find_SLP
 
 b = Barchart()
 
@@ -64,7 +65,6 @@ def get_rh_rating(symbol, analyst):
 def get_cp(symbol):
     data = robin_stocks.stocks.get_quotes(symbol)[0]['last_trade_price']
     return data
-
     
 username, password = get_creds()
 robin_stocks.login(username, password)
@@ -79,9 +79,13 @@ for symbol in d:
 for symbol in buys:
     print(symbol)
     cp = get_cp(symbol)
+    print(Find_SLP().get_slp(symbol))
+    exit()
     Track_Buys().buy(symbol, cp, True)
 
 for symbol in bought_symbols:
     if symbol not in buys:
         cp = get_cp(symbol)
+        print(Find_SLP().get_slp(symbol))
+        exit()
         Track_Buys().update_price(symbol, cp, False)
