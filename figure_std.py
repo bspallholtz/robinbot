@@ -32,5 +32,9 @@ class Find_SLP():
     res = statistics.pstdev(changes)
     mean = statistics.mean(changes)
     slp = (res + mean) * -1
+    slp = float("%.2f" % round(slp, 2))
+    slp = abs(slp)
+    slp = 100 - slp
+    slp = slp * .01
     return slp
 

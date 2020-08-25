@@ -64,7 +64,7 @@ def get_rh_rating(symbol, analyst):
 
 def get_cp(symbol):
     data = robin_stocks.stocks.get_quotes(symbol)[0]['last_trade_price']
-    return data
+    return float(data)
     
 username, password = get_creds()
 robin_stocks.login(username, password)
@@ -79,13 +79,19 @@ for symbol in d:
 for symbol in buys:
     print(symbol)
     cp = get_cp(symbol)
-    print(Find_SLP().get_slp(symbol))
-    exit()
+    slp = Find_SLP().get_slp(symbol)
+    new_slp = cp * slp
+    lp = cp * 1.25
+    quantity = int(100 / cp)
+    print(robin_stocks.orders.order_buy_limit(symbol, quantity,lp,timeInForce='gtc', extendedHours=True))
     Track_Buys().buy(symbol, cp, True)
+    exit()
 
 for symbol in bought_symbols:
     if symbol not in buys:
         cp = get_cp(symbol)
-        print(Find_SLP().get_slp(symbol))
-        exit()
+        slp = Find_SLP().get_slp(symbol)
+        new_slp = cp * slp
+        quanity =  int(100 / cp)
+        print("The current price is %f and the slp should be %f below that, setting slp at %f" % ( cp , slp, new_slp))
         Track_Buys().update_price(symbol, cp, False)
