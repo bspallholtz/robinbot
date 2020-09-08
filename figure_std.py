@@ -10,8 +10,9 @@ class Find_SLP():
     result = hist.to_json(orient="split")
     result = json.loads(result)
     changes = []
+    end = len(result['data']) - 5
     for index, row  in enumerate(result['data']):
-         if index < 3 or index >= 250:
+         if index < 3 or index >= end:
              continue
          highs_lows = []
          highs_lows.append(row[1])

@@ -5,16 +5,13 @@ import os.path
 
 
 class Track_Buys():
-
     def __init__(self):
         if not os.path.isfile('buys.db'):
             f = open('buys.db',"w+")
             f.close()
-
         connection = sqlite3.connect('buys.db')
-
         cursor = connection.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS buys ( symbol TEXT, buy_price INTERGER, current_price INTERGER, bot_recommends BOOL, buy_date TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS buys ( symbol TEXT UNIQUE, buy_price INTERGER, current_price INTERGER, bot_recommends BOOL, buy_date TEXT)")
         connection.commit()
 
     def buy(self,symbol, cp, bot_recommends):
