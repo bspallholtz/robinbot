@@ -24,7 +24,7 @@ def display_foo():
     cur = con.cursor()
     cur.execute('select symbol, buy_price, current_price, bot_recommends, buy_date, round(((current_price - buy_price) / buy_price) * 100, 2 ) as profit from buys order by profit')
     rows = cur.fetchall()
-    cur.execute('create view IF NOT EXISTS total_profit AS select "TOTAL" as symbol ,round(sum(buy_price), 2) as buy_price, round(sum(current_price), 2) as current_price, "TRUE" as bot_recommends, "NULL" as buy_date, round(((sum(current_price) - sum(buy_price))/sum(buy_price)) * 100, 2) as profit from buys')
+    cur.execute('create view IF NOT EXISTS total_profit AS select "TOTAL" as symbol ,round(sum(buy_price), 2) as buy_price, round(sum(current_price), 2) as current_price, "TRUE" as bot_recommends, "NULL" as buy_date, round(((sum(current_price) - sum(buy_price))/sum(buy_price)) * 100, 2) as profit from buys WHERE symbol != "SPY"')
     cur.execute('select * from total_profit')
     rows.append(cur.fetchall()[0])
     return render_template("display_profit.html",rows = rows)

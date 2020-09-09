@@ -54,3 +54,8 @@ class Track_Buys():
             bought_symbols.append(symbol[0])
         return bought_symbols
 
+    def get_oldest_trade(self):
+        connection = sqlite3.connect('buys.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT buy_date FROM buys ORDER BY buy_date ASC LIMIT 1")
+        return cursor.fetchall()[0][0]

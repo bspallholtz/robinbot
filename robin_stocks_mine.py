@@ -71,10 +71,6 @@ def get_cp(symbol):
     data = robin_stocks.stocks.get_quotes(symbol)[0]['last_trade_price']
     return float(data)
     
-#if is_market_open() is False:
-    #print("The market is closed")
-    #exit()
-
 def buy(symbol):
     if is_market_open() is False:
         return False
