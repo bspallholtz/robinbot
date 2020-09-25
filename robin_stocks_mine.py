@@ -9,6 +9,7 @@ from barchart import Barchart
 from new_finviz import FinViz
 from work_sql import Track_Buys
 from figure_std import Find_SLP
+from yahoo_analysts import Yahoo_Analysts
 
 barchart = Barchart()
 
@@ -122,12 +123,14 @@ def set_slp(symbol, quantity):
         side = order['side']
         if state == 'confirmed' and side == 'sell':
             current_slp = float(order['stop_price'])
-            current_slp = int(float("%.2f" % round(slp, 2)))
+            current_slp = int(float("%.2f" % round(current_slp, 2)))
             if slp <= current_slp:
                 print("%s has a SLP set of %i , the new SLP would be lower at %i, so I am not updating it" % ( symbol, current_slp, slp))
             else:
+                print("%s has a SLP set of %i , the new SLP would be HIGHER at %i, so I am updating it" % ( symbol, current_slp, slp))
                 print("Cancelling order")
                 robin_stocks.orders.cancel_stock_order(order['id'])
+                time.sleep(5)
                 robin_stocks.orders.order_sell_stop_loss(symbol, quantity, slp, timeInForce='gtc', extendedHours=False)
                 return True
     return False
@@ -141,8 +144,9 @@ bought_symbols = Track_Buys().get_symbols()
 symbols = FinViz().full()
 buys = []
 
-for symbol in symbols:
-    if get_rh_rating(symbol, 10) is True and barchart.analysts(symbol, 10) is True:
+for symbol in sorted(set(symbols)):
+    #if get_rh_rating(symbol, 10) is True and barchart.analysts(symbol, 10) is True and Yahoo_Analysts().is_buy(symbol) is True:
+    if get_rh_rating(symbol, 10) is True and Yahoo_Analysts().is_buy(symbol) is True:
         print("%s is a buy" % symbol)
         buys.append(symbol)
         cp = get_cp(symbol)
@@ -163,5 +167,9 @@ for symbol in buys:
         buy(symbol)
 print(buys)
 
-#for symbol, quantity in get_positions().items():
-    #set_slp(symbol,quantity)
+for symbol, quantity in get_positions().items():
+    cp = get_cp(symbol)
+    slp = get_slp(symbol)
+    time.sleep(5)
+    print("The SLP for %s is %i the cp is %i" % ( symbol,slp,cp))
+    set_slp(symbol,quantity)
