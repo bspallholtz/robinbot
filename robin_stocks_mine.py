@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import time
-import robin_stocks2 as robin_stocks
+import robin_stocks
 import configparser
 import json
 import requests
@@ -89,7 +89,7 @@ def buy(symbol):
     buy_data = robin_stocks.orders.order_buy_limit(symbol, quantity,limitprice,timeInForce='gtc', extendedHours=False)
     order = buy_data['id']
     while buy_data['state'] == 'queued':
-        time.sleep('5')
+        time.sleep(10)
         buy_data = robin_stocks.orders.get_stock_order_info(order)
     if buy_data['state'] == 'filled':
         return True
@@ -114,7 +114,6 @@ def get_slp(symbol):
    slp = float("%.2f" % round(slp, 2))
    return int(slp)
 
-
 def set_slp(symbol, quantity):
     orders = robin_stocks.orders.find_stock_orders(symbol=symbol)
     slp = get_slp(symbol)
@@ -130,12 +129,10 @@ def set_slp(symbol, quantity):
                 print("%s has a SLP set of %i , the new SLP would be HIGHER at %i, so I am updating it" % ( symbol, current_slp, slp))
                 print("Cancelling order")
                 robin_stocks.orders.cancel_stock_order(order['id'])
-                time.sleep(5)
+                time.sleep(10)
                 robin_stocks.orders.order_sell_stop_loss(symbol, quantity, slp, timeInForce='gtc', extendedHours=False)
                 return True
     return False
-
-
 
 username, password = get_creds()
 robin_stocks.login(username, password)
@@ -145,7 +142,6 @@ symbols = FinViz().full()
 buys = []
 
 for symbol in sorted(set(symbols)):
-    #if get_rh_rating(symbol, 10) is True and barchart.analysts(symbol, 10) is True and Yahoo_Analysts().is_buy(symbol) is True:
     if get_rh_rating(symbol, 10) is True and Yahoo_Analysts().is_buy(symbol) is True:
         print("%s is a buy" % symbol)
         buys.append(symbol)
@@ -154,7 +150,7 @@ for symbol in sorted(set(symbols)):
         if symbol not in bought_symbols:
             print("%s is a new buy,buying" % symbol)
             Track_Buys().buy(symbol, get_cp(symbol), True)
-            buy(symbol)
+            #buy(symbol)
 
 for symbol in bought_symbols:
     cp = get_cp(symbol)
@@ -165,11 +161,13 @@ for symbol in buys:
     if symbol not in open_positions:
         print("Symbol %s is a buy, but not bought in RH buying it" % symbol)
         buy(symbol)
+
 print(buys)
+time.sleep(5)
 
 for symbol, quantity in get_positions().items():
     cp = get_cp(symbol)
     slp = get_slp(symbol)
-    time.sleep(5)
+    time.sleep(10)
     print("The SLP for %s is %i the cp is %i" % ( symbol,slp,cp))
     set_slp(symbol,quantity)
