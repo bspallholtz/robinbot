@@ -69,13 +69,19 @@ def get_rh_rating(symbol, analyst):
         return True
 
 def get_cp(symbol):
-    data = robin_stocks.stocks.get_quotes(symbol)[0]['last_trade_price']
-    return float(data)
+    data = robin_stocks.stocks.get_quotes(symbol)[0]
+    if data is None:
+        return False
+    else:
+        cp = float(data['last_trade_price'])
+        return cp
     
 def buy(symbol):
     if is_market_open() is False:
         return False
     cp = get_cp(symbol)
+    if cp is False:
+        return False
     limitprice = cp * 1.0025
     quantity = int(100 / cp)
     if quantity == 0:
@@ -110,6 +116,8 @@ def get_slp(symbol):
    else:
       slp_per = Find_SLP().get_slp(symbol)
    cp = get_cp(symbol)
+   if cp is False:
+       return False
    slp = cp * slp_per
    slp = float("%.2f" % round(slp, 2))
    return int(slp)
@@ -146,6 +154,8 @@ for symbol in sorted(set(symbols)):
         print("%s is a buy" % symbol)
         buys.append(symbol)
         cp = get_cp(symbol)
+        if cp is False:
+            continue
         Track_Buys().buy(symbol, cp, True)
         if symbol not in bought_symbols:
             print("%s is a new buy,buying" % symbol)
@@ -154,6 +164,8 @@ for symbol in sorted(set(symbols)):
 
 for symbol in bought_symbols:
     cp = get_cp(symbol)
+    if cp is False:
+        continue
     if symbol not in buys:
         Track_Buys().update_price(symbol, cp, False)
 
@@ -167,6 +179,8 @@ time.sleep(5)
 
 for symbol, quantity in get_positions().items():
     cp = get_cp(symbol)
+    if cp is False:
+        continue
     slp = get_slp(symbol)
     time.sleep(10)
     print("The SLP for %s is %i the cp is %i" % ( symbol,slp,cp))

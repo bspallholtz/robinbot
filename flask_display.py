@@ -12,7 +12,7 @@ def hello_world():
 
 @app.route('/positions')
 def display_table():
-    con = sqlite3.connect('buys.db')
+    con = sqlite3.connect('/home/ec2-user/robinbot/buys.db')
     cur = con.cursor()
     cur.execute('select * from buys order by symbol')
     rows = cur.fetchall()
@@ -20,7 +20,7 @@ def display_table():
 
 @app.route('/profit')
 def display_foo():
-    con = sqlite3.connect('buys.db')
+    con = sqlite3.connect('/home/ec2-user/robinbot/buys.db')
     cur = con.cursor()
     cur.execute('select symbol, buy_price, current_price, bot_recommends, buy_date, round(((current_price - buy_price) / buy_price) * 100, 2 ) as profit from buys order by profit')
     rows = cur.fetchall()
@@ -31,7 +31,7 @@ def display_foo():
 
 @app.route('/current_buys')
 def display_buys():
-    con = sqlite3.connect('buys.db')
+    con = sqlite3.connect('/home/ec2-user/robinbot/buys.db')
     cur = con.cursor()
     cur.execute('select  symbol, buy_price, current_price, bot_recommends, buy_date, round(((current_price - buy_price) / buy_price) * 100, 0) as profit from buys where bot_recommends == "True" order by profit')
     rows = cur.fetchall()
