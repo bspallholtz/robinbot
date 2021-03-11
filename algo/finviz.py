@@ -8,7 +8,7 @@ class FinViz():
         possible = [ 'strongbuy', 'buybetter', 'buy' ]
         if an_recom is None:
             an_recom = 'strongbuy'
-        if type(an_recom) != 'str':
+        if isinstance(an_recom, str) is False:
             an_recom = 'strongbuy'
         if an_recom not in possible:
             an_recom = 'strongbuy'
@@ -18,7 +18,7 @@ class FinViz():
       possible = [ 'microover', 'smallover', 'midover', 'largeover' ]
       if cap is None:
           cap = 'midover'
-      if type(cap) != 'str':
+      if isinstance(cap, str) is False:
           cap = 'midover'
       if cap not in possible:
           cap = 'midover'
@@ -53,10 +53,13 @@ class FinViz():
         soup = BeautifulSoup(response.text, "html.parser")
         data = soup.prettify()
         data = data.partition('<!-- TS')
+        final = ''
         for x in data:
             if 'TE -->' in x:
-                final = x.partition('TE -->')[0]
-                break
+              final = x.partition('TE -->')[0]
+              break
+        if len(final) == 0:
+            return None
         lines = final.split("\n")
         non_empty_lines = [line for line in lines if line.strip() != ""]
         symbols = []
@@ -73,13 +76,17 @@ class FinViz():
         r = 1
         end = "https://finviz.com/screener.ashx?v=111&f=an_recom_{an_recom},cap_{cap},geo_usa,sh_price_o{sh_price},targetprice_a{target}&r={r}".format(an_recom=an_recom, cap=cap, target=target,sh_price=sh_price, r=r)
         symbol_data = self.get_symbol_data(end)
+        if symbol_data is None:
+            return None
         symbols.extend(symbol_data)
         hold = False
         while hold is False:
             r = r + 20
             end = "https://finviz.com/screener.ashx?v=111&f=an_recom_{an_recom},cap_{cap},geo_usa,sh_price_o{sh_price},targetprice_a{target}&r={r}".format(an_recom=an_recom, cap=cap, target=target,sh_price=sh_price, r=r)
             symbol_data = self.get_symbol_data(end)
-            if len(symbol_data) == 1:
+            if symbol_data is None:
+                hold = True
+            elif len(symbol_data) == 1:
                 symbols.extend(symbol_data)
                 hold = True
             else:
